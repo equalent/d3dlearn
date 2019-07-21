@@ -21,10 +21,9 @@ LE_API int RunEngine(HINSTANCE hInstance)
 #endif
 	try {
 		LEngine::Instance()->Run(hInstance);
-		LEngine::Instance()->Run(hInstance);
 	}
 	catch (LException e) {
-		MessageBoxW(NULL, e.Format().c_str(), L"UNHANDLED EXCEPTION", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
+		MessageBoxW(NULL, e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
 		return -1;
 	}
 	
