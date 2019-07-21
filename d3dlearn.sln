@@ -6,10 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShaderCompiler", "ShaderCompiler\ShaderCompiler.vcxproj", "{F432E28B-CA23-48A0-9457-A63991015793}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnLaunch", "LearnLaunch\LearnLaunch.vcxproj", "{531A5933-A10D-4B34-B515-E90FCD8C96F4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{56E5D33F-2E5D-4475-BECE-F42A2F06537C} = {56E5D33F-2E5D-4475-BECE-F42A2F06537C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnEngine", "LearnEngine\LearnEngine.vcxproj", "{56E5D33F-2E5D-4475-BECE-F42A2F06537C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LearnGraphicsD3D11", "LearnGraphicsD3D11\LearnGraphicsD3D11.vcxproj", "{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +44,6 @@ Global
 		{56E5D33F-2E5D-4475-BECE-F42A2F06537C}.Release|x64.Build.0 = Release|x64
 		{56E5D33F-2E5D-4475-BECE-F42A2F06537C}.Release|x86.ActiveCfg = Release|Win32
 		{56E5D33F-2E5D-4475-BECE-F42A2F06537C}.Release|x86.Build.0 = Release|Win32
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Debug|x64.ActiveCfg = Debug|x64
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Debug|x64.Build.0 = Debug|x64
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Debug|x86.ActiveCfg = Debug|Win32
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Debug|x86.Build.0 = Debug|Win32
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Release|x64.ActiveCfg = Release|x64
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Release|x64.Build.0 = Release|x64
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Release|x86.ActiveCfg = Release|Win32
-		{EC4895DE-6D5D-45F9-9D99-DDB61D231F94}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
