@@ -29,3 +29,11 @@ inline std::string convert_utf16_to_utf8(const std::wstring& source)
 	WideCharToMultiByte(CP_UTF8, 0, &source[0], static_cast<int>(source.size()), &result[0], size_needed, NULL, NULL);
 	return result;
 }
+
+inline int GetScreenWidth() {
+	return GetSystemMetrics(SM_CXSCREEN);
+}
+
+inline int GetScreenHeight() {
+	return GetSystemMetrics(SM_CYSCREEN);
+}

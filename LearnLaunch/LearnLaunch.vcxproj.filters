@@ -3,4 +3,13 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LearnLaunch.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\Users\andre\Downloads\LearnEngineIcon.ico" />
+  </ItemGroup>
 </Project>

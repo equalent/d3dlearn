@@ -151,13 +151,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="inipp.h" />
     <ClInclude Include="LEngine.h" />
     <ClInclude Include="LearnEngineAPI.h" />
     <ClInclude Include="LException.h" />
+    <ClInclude Include="LWindow.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LEngine.cpp" />
+    <ClCompile Include="LWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LearnEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\Users\andre\Downloads\LearnEngineIcon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
