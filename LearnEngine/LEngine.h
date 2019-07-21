@@ -5,13 +5,10 @@
 #include <Windows.h>
 #include <memory>
 #include "LearnEngineAPI.h"
-#include <exception>
+#include "LException.h"
 
-class LEngineAlreadyRunning {
-	const char* what() const throw ()
-	{
-		return "LearnEngine is already running!";
-	}
+class LEngineAlreadyRunningException : public LException {
+	DEFINE_EXCEPTION_WITH_MESSAGE(LEngineAlreadyRunningException, L"LearnEngine is already running!")
 };
 
 class LEngine {

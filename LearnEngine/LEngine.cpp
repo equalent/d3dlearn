@@ -19,7 +19,15 @@ LE_API int RunEngine(HINSTANCE hInstance)
 	OutputDebugStringW(woss.str().c_str());
 	delete [] lpFilename;
 #endif
-	LEngine::Instance()->Run(hInstance);
+	try {
+		LEngine::Instance()->Run(hInstance);
+		LEngine::Instance()->Run(hInstance);
+	}
+	catch (LException e) {
+		MessageBoxW(NULL, e.Format().c_str(), L"UNHANDLED EXCEPTION", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
+		return -1;
+	}
+	
 	return 0;
 }
 
@@ -32,7 +40,7 @@ void LEngine::Run(HINSTANCE nhInstance) {
 		bRunning = true;
 	}
 	else {
-		throw LEngineAlreadyRunning();
+		throw LEngineAlreadyRunningException(__LINE__, __FILE__);
 	}
 }
 
