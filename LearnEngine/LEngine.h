@@ -7,9 +7,7 @@
 #include "LearnEngineAPI.h"
 #include "LException.h"
 
-class LEngineAlreadyRunningException : public LException {
-	DEFINE_EXCEPTION_WITH_MESSAGE(LEngineAlreadyRunningException, L"LearnEngine is already running!")
-};
+DEFINE_EXCEPTION_WITH_MESSAGE(LEngineAlreadyRunningException, L"LearnEngine is already running!")
 
 class LEngine {
 public:

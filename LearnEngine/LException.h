@@ -38,10 +38,18 @@ protected:
 	std::wstring Message;
 };
 
-#define DEFINE_EXCEPTION(ExceptionType) public:\
+#define DEFINE_EXCEPTION(ExceptionType) class ExceptionType:public LException{public:\
+ ExceptionType (int nLine, std::string nFile, std::wstring nMessage) :\
+ LException(nLine, nFile, nMessage) {Name = #ExceptionType;}};
+
+#define DEFINE_EXCEPTION_WITH_MESSAGE(ExceptionType, ExceptionMessage) class ExceptionType:\
+ public LException{public:ExceptionType (int nLine, std::string nFile) :\
+ LException(nLine, nFile, ExceptionMessage) {Name = #ExceptionType;}};
+
+#define IMPLEMENT_EXCEPTION(ExceptionType) public:\
  ExceptionType (int nLine, std::string nFile, std::wstring nMessage) :\
  LException(nLine, nFile, nMessage) {Name = #ExceptionType;}
 
-#define DEFINE_EXCEPTION_WITH_MESSAGE(ExceptionType, ExceptionMessage) public:\
+#define IMPLEMENT_EXCEPTION_WITH_MESSAGE(ExceptionType, ExceptionMessage) public:\
  ExceptionType (int nLine, std::string nFile) :\
  LException(nLine, nFile, ExceptionMessage) {Name = #ExceptionType;}
