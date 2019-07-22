@@ -18,6 +18,7 @@ public:
 	HINSTANCE GetInstanceHandle();
 	HWND GetMainWindowHandle();
 private:
+	void MainLoop(float DeltaTime);
 	bool bRunning = false;
 	HINSTANCE hInstance = NULL;
 	std::shared_ptr<LWindow> pMainWindow = nullptr;

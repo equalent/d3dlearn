@@ -5,6 +5,7 @@
 
 #include <string>
 #include <sstream>
+#include <ctime>
 
 #define HANDLE_EXCEPTIONS 1
 
@@ -56,8 +57,17 @@ void LEngine::Run(HINSTANCE nhInstance) {
 
 		pMainWindow->SetOption(LWindowOptionsEnableFullscreenOnF11, true);
 
-		while (bRunning)
-			LWindow::CheckMessages();
+#pragma warning (push)
+#pragma warning (disable: 4244)
+		clock_t oldTime = clock();
+		clock_t newTime = clock();
+
+		while (bRunning) {
+			oldTime = newTime;
+			newTime = clock();
+			MainLoop((float)(newTime-oldTime)/CLOCKS_PER_SEC);
+		}
+#pragma warning (pop)
 	}
 	else {
 		throw LEngineAlreadyRunningException(__LINE__, __FILEW__);
@@ -86,4 +96,8 @@ HWND LEngine::GetMainWindowHandle() {
 		return pMainWindow->GetHandle();
 	}
 	else return NULL;
+}
+
+void LEngine::MainLoop(float DeltaTime) {
+	pMainWindow->CheckMessages();
 }
