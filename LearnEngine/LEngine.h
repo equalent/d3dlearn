@@ -16,10 +16,11 @@ public:
 	void Run(HINSTANCE);
 	void Shutdown();
 	HINSTANCE GetInstanceHandle();
+	HWND GetMainWindowHandle();
 private:
 	bool bRunning = false;
 	HINSTANCE hInstance = NULL;
-	std::shared_ptr<LWindow> pMainWindow;
+	std::shared_ptr<LWindow> pMainWindow = nullptr;
 	LEngine();
 };
 

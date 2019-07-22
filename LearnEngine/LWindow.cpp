@@ -15,22 +15,16 @@ bool WindowClassRegistered = false;
 std::map<HWND, LWindow*> _WinMap;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	//TODO delegate event processing to window
 	try {
 		return _WinMap.at(hWnd)->WndProc(message, wParam, lParam);
 	}
 	catch (std::out_of_range) {
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-	/*switch (message)
-	{
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
+	catch (LException e) {
+		MessageBoxW(hWnd, e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine window", MB_OK | MB_ICONERROR );
 		return DefWindowProc(hWnd, message, wParam, lParam);
-	}*/
-
+	}
 	return 0;
 }
 
@@ -74,6 +68,10 @@ LWindow::LWindow() {
 	X = Y = 0;
 	CenterOnScreen();
 	SetTitle(LWINDOW_DEFAULT_NAME);
+}
+
+HWND LWindow::GetHandle() {
+	return hWnd;
 }
 
 std::wstring LWindow::GetTitle() {

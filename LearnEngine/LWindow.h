@@ -21,6 +21,7 @@ enum LWindowOptions {
 class LWindow {
 public:
 	LWindow();
+	HWND GetHandle();
 	std::wstring GetTitle();
 	void SetTitle(std::wstring nTitle);
 	void SetOption(LWindowOptions nOption, bool nValue);

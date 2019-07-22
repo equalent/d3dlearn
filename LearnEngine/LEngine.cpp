@@ -28,7 +28,7 @@ LE_API int RunEngine(HINSTANCE hInstance)
 #if HANDLE_EXCEPTIONS
 	}
 	catch (LException e) {
-		MessageBoxW(NULL, e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
+		MessageBoxW(LEngine::Instance()->GetMainWindowHandle(), e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
 		return -1;
 	}
 #endif
@@ -79,4 +79,11 @@ void LEngine::Shutdown() {
 
 HINSTANCE LEngine::GetInstanceHandle() {
 	return hInstance;
+}
+
+HWND LEngine::GetMainWindowHandle() {
+	if (pMainWindow) {
+		return pMainWindow->GetHandle();
+	}
+	else return NULL;
 }
