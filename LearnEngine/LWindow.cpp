@@ -22,7 +22,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	catch (LException e) {
-		MessageBoxW(hWnd, e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine window", MB_OK | MB_ICONERROR );
+		MessageBoxW(hWnd, e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine window", MB_OK | MB_ICONERROR);
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;
@@ -63,11 +63,12 @@ LWindow::LWindow() {
 	_WinMap.insert(std::pair<HWND, LWindow*>(hWnd, this));
 
 	SetVisible(true);
-	Width = LWINDOW_DEFAULT_WIDTH;
-	Height = LWINDOW_DEFAULT_HEIGHT;
 	X = Y = 0;
+	SetTitle(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Title"]);
+	Width = _wtoi(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Width"].c_str());
+	Height = _wtoi(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Height"].c_str());
 	CenterOnScreen();
-	SetTitle(LWINDOW_DEFAULT_NAME);
+	SetResizable(_wtoi(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Resizable"].c_str()) == 1);
 }
 
 HWND LWindow::GetHandle() {
@@ -85,10 +86,10 @@ void LWindow::SetTitle(std::wstring nTitle) {
 
 void LWindow::SetOption(LWindowOptions nOption, bool nValue) {
 	switch (nOption) {
-		case LWindowOptionsEnableFullscreenOnF11: {
-			oEnableFullscreenOnF11 = nValue;
-			break;
-		}
+	case LWindowOptionsEnableFullscreenOnF11: {
+		oEnableFullscreenOnF11 = nValue;
+		break;
+	}
 	}
 }
 
@@ -130,6 +131,7 @@ void LWindow::SetFullscreen(bool nFullscreen) {
 			w_Y = Y;
 
 			DWORD dwstyle = GetWindowLongW(hWnd, GWL_STYLE);
+			w_Style = dwstyle;
 			dwstyle &= ~WS_CAPTION;
 			dwstyle |= WS_POPUP;
 			dwstyle &= ~WS_OVERLAPPEDWINDOW;
@@ -148,15 +150,24 @@ void LWindow::SetFullscreen(bool nFullscreen) {
 		Y = w_Y;
 		Resize();
 
-		DWORD dwstyle = GetWindowLongW(hWnd, GWL_STYLE);
-		dwstyle |= WS_CAPTION;
-		dwstyle &= ~WS_POPUP;
-		dwstyle |= WS_OVERLAPPEDWINDOW;
-		SetWindowLongW(hWnd, GWL_STYLE, dwstyle);
+		SetWindowLongW(hWnd, GWL_STYLE, w_Style);
 
 		ShowWindow(hWnd, SW_RESTORE);
 		Fullscreen = false;
 	}
+}
+
+void LWindow::SetResizable(bool nResizable) {
+	DWORD dwstyle = GetWindowLongW(hWnd, GWL_STYLE);
+	if (nResizable) {
+		dwstyle |= (WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX);
+	}
+	else {
+		dwstyle &= ~(WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX);
+	}
+	SetWindowLongW(hWnd, GWL_STYLE, dwstyle);
+	Resizable = nResizable;
+
 }
 
 void LWindow::ToggleFullscreen() {

@@ -93,6 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;LEARNENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);LEARNENGINE_BUILD_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -109,6 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;LEARNENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);LEARNENGINE_BUILD_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,6 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;LEARNENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);LEARNENGINE_BUILD_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,6 +150,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;LEARNENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);LEARNENGINE_BUILD_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inipp.h" />
+    <ClInclude Include="LConfig.h" />
     <ClInclude Include="LEngine.h" />
     <ClInclude Include="LearnEngineAPI.h" />
     <ClInclude Include="LException.h" />
@@ -168,6 +173,7 @@
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LConfig.cpp" />
     <ClCompile Include="LEngine.cpp" />
     <ClCompile Include="LWindow.cpp" />
   </ItemGroup>

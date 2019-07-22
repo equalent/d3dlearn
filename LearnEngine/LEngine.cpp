@@ -12,6 +12,8 @@
 std::shared_ptr<LEngine> EnginePtr;
 bool EnginePtrInitialized = false;
 
+namespace fs = std::experimental::filesystem;
+
 LE_API int RunEngine(HINSTANCE hInstance)
 {
 #if defined(_DEBUG)
@@ -44,6 +46,14 @@ void LEngine::Run(HINSTANCE nhInstance) {
 	if (!bRunning) {
 		this->hInstance = nhInstance;
 		bRunning = true;
+
+		// INITIALIZE FS
+		wchar_t* lpFilename = new wchar_t[2048];
+		GetModuleFileNameW(hInstance, lpFilename, 2048);
+		RootPath = fs::path(std::wstring(lpFilename)).parent_path();
+
+		// LOAD CONFIG
+		pConfig = std::make_shared<LConfig>(RootPath / fs::path(L"learn.ini"));
 
 		pMainWindow = std::make_shared<LWindow>();
 		pMainWindow->BindOnResize([this](int nWidth, int nHeight) {
@@ -85,6 +95,10 @@ std::shared_ptr<LEngine> LEngine::Instance() {
 
 void LEngine::Shutdown() {
 	bRunning = false;
+}
+
+std::shared_ptr<LConfig> LEngine::GetConfig() {
+	return pConfig;
 }
 
 HINSTANCE LEngine::GetInstanceHandle() {

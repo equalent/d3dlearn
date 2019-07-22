@@ -29,6 +29,7 @@ public:
 	bool GetVisible();
 	void SetVisible(bool nVisible);
 	void SetFullscreen(bool nFullscreen);
+	void SetResizable(bool nResizable);
 	void ToggleFullscreen();
 
 	// size/position getters/setters
@@ -57,8 +58,10 @@ private:
 	void Resize();
 	int Width, Height, X, Y;
 	int w_Width, w_Height, w_X, w_Y;
+	LONG w_Style;
 	bool Visible;
 	bool Fullscreen = false;
+	bool Resizable = false;
 	HWND hWnd;
 
 	void Destroy();
