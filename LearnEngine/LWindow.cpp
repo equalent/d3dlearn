@@ -51,7 +51,7 @@ void LRegisterClass() {
 
 	ATOM result = RegisterClassExW(&wc);
 	if (result == 0) {
-		throw LWindowUnableToRegisterClass(__LINE__, __FILEW__);
+		throw LWindowUnableToRegisterClassException(__LINE__, __FILEW__);
 	}
 }
 
@@ -62,7 +62,7 @@ LWindow::LWindow() {
 	}
 	HWND hwnd = CreateWindowExW(NULL, LWINDOW_CLASS_NAME, LWINDOW_DEFAULT_NAME, WS_OVERLAPPEDWINDOW, 0, 0, LWINDOW_DEFAULT_WIDTH, LWINDOW_DEFAULT_WIDTH, NULL, NULL, GetModuleHandle(NULL), NULL);
 	if (hwnd == NULL) {
-		throw LWindowUnableToCreate(__LINE__, __FILEW__);
+		throw LWindowUnableToCreateException(__LINE__, __FILEW__);
 	}
 	hWnd = hwnd;
 
@@ -85,6 +85,15 @@ void LWindow::SetTitle(std::wstring nTitle) {
 	Title = nTitle;
 }
 
+void LWindow::SetOption(LWindowOptions nOption, bool nValue) {
+	switch (nOption) {
+		case LWindowOptionsEnableFullscreenOnF11: {
+			oEnableFullscreenOnF11 = nValue;
+			break;
+		}
+	}
+}
+
 void LWindow::SetVisible(bool nVisible) {
 	ShowWindowAsync(hWnd, nVisible ? SW_SHOW : SW_HIDE);
 	Visible = nVisible;
@@ -95,8 +104,9 @@ bool LWindow::GetVisible() {
 }
 
 void LWindow::SetFullscreen(bool nFullscreen) {
-	if (nFullscreen) {
-		//SetWindowRgn(hWnd, 0, false);
+	if (nFullscreen && !Fullscreen) {
+		ShowWindow(hWnd, SW_RESTORE);
+		SetWindowRgn(hWnd, 0, false);
 
 		DEVMODEW newSettings;
 		newSettings.dmSize = sizeof(DEVMODEW);
@@ -113,7 +123,7 @@ void LWindow::SetFullscreen(bool nFullscreen) {
 		long result = ChangeDisplaySettingsW(NULL, CDS_FULLSCREEN);
 
 		if (result != DISP_CHANGE_SUCCESSFUL) {
-			throw LWindowUnableToEnterFullscreen(__LINE__, __FILEW__);
+			throw LWindowUnableToEnterFullscreenException(__LINE__, __FILEW__);
 		}
 		else {
 			w_Width = Width;
@@ -124,11 +134,13 @@ void LWindow::SetFullscreen(bool nFullscreen) {
 			DWORD dwstyle = GetWindowLongW(hWnd, GWL_STYLE);
 			dwstyle &= ~WS_CAPTION;
 			dwstyle |= WS_POPUP;
+			dwstyle &= ~WS_OVERLAPPEDWINDOW;
 			SetWindowLongW(hWnd, GWL_STYLE, dwstyle);
 			ShowWindow(hWnd, SW_SHOWMAXIMIZED);
 
 			SetWindowPos(hWnd, 0, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 		}
+		Fullscreen = true;
 	}
 	else {
 		ChangeDisplaySettings(0, 0);
@@ -141,10 +153,16 @@ void LWindow::SetFullscreen(bool nFullscreen) {
 		DWORD dwstyle = GetWindowLongW(hWnd, GWL_STYLE);
 		dwstyle |= WS_CAPTION;
 		dwstyle &= ~WS_POPUP;
+		dwstyle |= WS_OVERLAPPEDWINDOW;
 		SetWindowLongW(hWnd, GWL_STYLE, dwstyle);
 
 		ShowWindow(hWnd, SW_RESTORE);
+		Fullscreen = false;
 	}
+}
+
+void LWindow::ToggleFullscreen() {
+	SetFullscreen(!Fullscreen);
 }
 
 int LWindow::GetWidth() {
@@ -185,13 +203,13 @@ void LWindow::SetY(int nY) {
 
 void LWindow::Resize() {
 	if (SetWindowPos(hWnd, HWND_NOTOPMOST, X, Y, Width, Height, NULL) == 0) {
-		throw LWindowUnableToResize(__LINE__, __FILEW__);
+		throw LWindowUnableToResizeException(__LINE__, __FILEW__);
 	}
 }
 
 void LWindow::Destroy()
 {
-	// TODO implement
+	_WinMap.erase(hWnd);
 }
 
 void LWindow::CenterOnScreen() {
@@ -202,31 +220,38 @@ void LWindow::CenterOnScreen() {
 
 LRESULT LWindow::WndProc(UINT message, WPARAM wParam, LPARAM lParam) {
 	switch (message) {
-		case WM_SIZE: {
-			Width = LOWORD(lParam);
-			Height = HIWORD(lParam);
-			if (this->OnResize != nullptr) {
-				OnResize(Width, Height);
-			}
-			break;
+	case WM_SIZE: {
+		Width = LOWORD(lParam);
+		Height = HIWORD(lParam);
+		if (this->OnResize != nullptr) {
+			OnResize(Width, Height);
 		}
-		case WM_MOVE: {
-			X = LOWORD(lParam);
-			Y = HIWORD(lParam);
-			if (this->OnMove != nullptr) {
-				OnMove(X, Y);
-			}
-			break;
+		break;
+	}
+	case WM_MOVE: {
+		X = LOWORD(lParam);
+		Y = HIWORD(lParam);
+		if (this->OnMove != nullptr) {
+			OnMove(X, Y);
 		}
-		case WM_CLOSE: {
-			if (this->OnClose != nullptr) {
-				if (!OnClose()) {
-					return true;
-				}
+		break;
+	}
+	case WM_CLOSE: {
+		if (this->OnClose != nullptr) {
+			if (!OnClose()) {
+				return true;
 			}
-			Destroy();
-			break;
 		}
+		Destroy();
+		break;
+	}
+	case WM_KEYUP: {
+		if (oEnableFullscreenOnF11 && wParam == VK_F11) {
+			ToggleFullscreen();
+			return 0;
+		}
+		break;
+	}
 	}
 	return DefWindowProcW(hWnd, message, wParam, lParam);
 }

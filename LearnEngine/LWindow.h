@@ -9,20 +9,26 @@
 
 using std::placeholders::_1;
 
-DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToRegisterClass, L"Unable to register window class (RegisterClassExW returned 0)!");
-DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToCreate, L"Unable to create window (CreateWindowExW returned 0)!");
-DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToResize, L"Unable to resize window (SetWindowPos returned nonzero)!");
-DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToEnterFullscreen, L"Unable to enter fullscreen (ChangeDisplaySettings didn't return DISP_CHANGE_SUCCESFUL)!");
+DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToRegisterClassException, L"Unable to register window class (RegisterClassExW returned 0)!");
+DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToCreateException, L"Unable to create window (CreateWindowExW returned 0)!");
+DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToResizeException, L"Unable to resize window (SetWindowPos returned nonzero)!");
+DEFINE_EXCEPTION_WITH_MESSAGE(LWindowUnableToEnterFullscreenException, L"Unable to enter fullscreen (ChangeDisplaySettings didn't return DISP_CHANGE_SUCCESFUL)!");
+
+enum LWindowOptions {
+	LWindowOptionsEnableFullscreenOnF11
+};
 
 class LWindow {
 public:
 	LWindow();
 	std::wstring GetTitle();
 	void SetTitle(std::wstring nTitle);
+	void SetOption(LWindowOptions nOption, bool nValue);
 
 	bool GetVisible();
 	void SetVisible(bool nVisible);
 	void SetFullscreen(bool nFullscreen);
+	void ToggleFullscreen();
 
 	// size/position getters/setters
 	int GetWidth();
@@ -51,6 +57,7 @@ private:
 	int Width, Height, X, Y;
 	int w_Width, w_Height, w_X, w_Y;
 	bool Visible;
+	bool Fullscreen = false;
 	HWND hWnd;
 
 	void Destroy();
@@ -62,4 +69,7 @@ private:
 	std::function<void(int, int)> OnResize = nullptr;
 	// X, Y
 	std::function<void(int, int)> OnMove = nullptr;
+
+	// OPTIONS:
+	bool oEnableFullscreenOnF11 = false;
 };

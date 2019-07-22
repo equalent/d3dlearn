@@ -46,13 +46,15 @@ void LEngine::Run(HINSTANCE nhInstance) {
 
 		pMainWindow = std::make_shared<LWindow>();
 		pMainWindow->BindOnResize([this](int nWidth, int nHeight) {
-			// nothing
+			// TODO resize swapchain buffers
 			});
 
 		pMainWindow->BindOnClose([this]() {
 			this->Shutdown();
 			return true;
 			});
+
+		pMainWindow->SetOption(LWindowOptionsEnableFullscreenOnF11, true);
 
 		while (bRunning)
 			LWindow::CheckMessages();
