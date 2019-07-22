@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <ctime>
+#include <exception>
 
 #define HANDLE_EXCEPTIONS 1
 
@@ -32,6 +33,13 @@ LE_API int RunEngine(HINSTANCE hInstance)
 	}
 	catch (LException e) {
 		MessageBoxW(LEngine::Instance()->GetMainWindowHandle(), e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
+		return -1;
+	}
+	catch (std::exception e) {
+		std::wostringstream woss;
+		woss << L"STD::EXCEPTION: ";
+		woss << convert_utf8_to_utf16(std::string(e.what()));
+		MessageBoxW(LEngine::Instance()->GetMainWindowHandle(), woss.str().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
 		return -1;
 	}
 #endif

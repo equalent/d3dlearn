@@ -64,9 +64,20 @@ LWindow::LWindow() {
 
 	SetVisible(true);
 	X = Y = 0;
-	SetTitle(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Title"]);
-	Width = _wtoi(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Width"].c_str());
-	Height = _wtoi(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Height"].c_str());
+	SetTitle(LEngine::Instance()->GetConfig()->GetSections().at(L"DefaultWindowSettings").at(L"Title"));
+	try {
+		Width = _wtoi(LEngine::Instance()->GetConfig()->GetSections().at(L"DefaultWindowSettings").at(L"Width").c_str());
+	}
+	catch (std::out_of_range) {
+		Width = LWINDOW_DEFAULT_WIDTH;
+	}
+
+	try {
+		Height = _wtoi(LEngine::Instance()->GetConfig()->GetSections().at(L"DefaultWindowSettings").at(L"Height").c_str());
+	}
+	catch (std::out_of_range) {
+		Width = LWINDOW_DEFAULT_HEIGHT;
+	}
 	CenterOnScreen();
 	SetResizable(_wtoi(LEngine::Instance()->GetConfig()->GetSections()[L"DefaultWindowSettings"][L"Resizable"].c_str()) == 1);
 }
