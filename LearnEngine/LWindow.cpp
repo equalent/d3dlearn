@@ -73,16 +73,25 @@ LWindow::LWindow() {
 	Height = LWINDOW_DEFAULT_HEIGHT;
 	X = Y = 0;
 	CenterOnScreen();
-	SetFullscreen(true);
-	SetFullscreen(false);
+	SetTitle(LWINDOW_DEFAULT_NAME);
+}
+
+std::wstring LWindow::GetTitle() {
+	return Title;
 }
 
 void LWindow::SetTitle(std::wstring nTitle) {
 	SetWindowTextW(hWnd, nTitle.c_str());
+	Title = nTitle;
 }
 
 void LWindow::SetVisible(bool nVisible) {
 	ShowWindowAsync(hWnd, nVisible ? SW_SHOW : SW_HIDE);
+	Visible = nVisible;
+}
+
+bool LWindow::GetVisible() {
+	return Visible;
 }
 
 void LWindow::SetFullscreen(bool nFullscreen) {
@@ -180,6 +189,11 @@ void LWindow::Resize() {
 	}
 }
 
+void LWindow::Destroy()
+{
+	// TODO implement
+}
+
 void LWindow::CenterOnScreen() {
 	X = GetScreenWidth() / 2 - Width / 2;
 	Y = GetScreenHeight() / 2 - Height / 2;
@@ -191,10 +205,27 @@ LRESULT LWindow::WndProc(UINT message, WPARAM wParam, LPARAM lParam) {
 		case WM_SIZE: {
 			Width = LOWORD(lParam);
 			Height = HIWORD(lParam);
+			if (this->OnResize != nullptr) {
+				OnResize(Width, Height);
+			}
+			break;
 		}
 		case WM_MOVE: {
 			X = LOWORD(lParam);
 			Y = HIWORD(lParam);
+			if (this->OnMove != nullptr) {
+				OnMove(X, Y);
+			}
+			break;
+		}
+		case WM_CLOSE: {
+			if (this->OnClose != nullptr) {
+				if (!OnClose()) {
+					return true;
+				}
+			}
+			Destroy();
+			break;
 		}
 	}
 	return DefWindowProcW(hWnd, message, wParam, lParam);
@@ -207,4 +238,12 @@ void LWindow::CheckMessages() {
 		TranslateMessage(&message);
 		DispatchMessage(&message);
 	}
+}
+
+void LWindow::BindOnClose(std::function<bool()> nOnClose) {
+	OnClose = nOnClose;
+}
+
+void LWindow::BindOnResize(std::function<void(int, int)> nOnResize) {
+	OnResize = nOnResize;
 }

@@ -14,6 +14,7 @@ class LEngine {
 public:
 	static std::shared_ptr<LEngine> Instance();
 	void Run(HINSTANCE);
+	void Shutdown();
 	HINSTANCE GetInstanceHandle();
 private:
 	bool bRunning = false;

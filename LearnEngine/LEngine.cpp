@@ -6,20 +6,20 @@
 #include <string>
 #include <sstream>
 
-#define HANDLE_EXCEPTIONS false
+#define HANDLE_EXCEPTIONS 1
 
 std::shared_ptr<LEngine> EnginePtr;
 bool EnginePtrInitialized = false;
 
 LE_API int RunEngine(HINSTANCE hInstance)
-{	
+{
 #if defined(_DEBUG)
 	wchar_t* lpFilename = new wchar_t[2048];
 	GetModuleFileNameW(hInstance, lpFilename, 2048);
 	std::wostringstream woss;
 	woss << L"Initializing LearnEngine...\nExecutable filename: " << lpFilename << L"\n";
 	OutputDebugStringW(woss.str().c_str());
-	delete [] lpFilename;
+	delete[] lpFilename;
 #endif
 #if HANDLE_EXCEPTIONS
 	try {
@@ -32,7 +32,7 @@ LE_API int RunEngine(HINSTANCE hInstance)
 		return -1;
 	}
 #endif
-	
+
 	return 0;
 }
 
@@ -45,9 +45,17 @@ void LEngine::Run(HINSTANCE nhInstance) {
 		bRunning = true;
 
 		pMainWindow = std::make_shared<LWindow>();
+		pMainWindow->BindOnResize([this](int nWidth, int nHeight) {
+			// nothing
+			});
 
-		while(1)
-		LWindow::CheckMessages();
+		pMainWindow->BindOnClose([this]() {
+			this->Shutdown();
+			return true;
+			});
+
+		while (bRunning)
+			LWindow::CheckMessages();
 	}
 	else {
 		throw LEngineAlreadyRunningException(__LINE__, __FILEW__);
@@ -61,6 +69,10 @@ std::shared_ptr<LEngine> LEngine::Instance() {
 		EnginePtrInitialized = true;
 	}
 	return EnginePtr;
+}
+
+void LEngine::Shutdown() {
+	bRunning = false;
 }
 
 HINSTANCE LEngine::GetInstanceHandle() {
