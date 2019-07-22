@@ -10,11 +10,11 @@ pool:
   vmImage: 'windows-2019'
 
 steps:
-- script: msbuild d3dlearn.sln -p:Configuration=Debug -p:Platform=x64
-  displayName: 'Build debug version'
+- task: MSBuild@1
+  inputs:
+    solution: '**/*.sln' 
+    msbuildArchitecture: 'x64'
 - publish: x64/Debug
   artifact: Debug
-- script: msbuild d3dlearn.sln -p:Configuration=Release -p:Platform=x64
-  displayName: 'Build release version'
 - publish: x64/Release
   artifact: Release

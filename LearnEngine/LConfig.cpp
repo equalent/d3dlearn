@@ -13,6 +13,7 @@ LConfig::LConfig(fs::path ConfigPath) {
 	if (m_Ini->errors.size() > 0) {
 		throw LConfigParseErrorException(__LINE__, __FILEW__);
 	}
+	wis.close();
 }
 
 inipp::Ini<wchar_t>::Sections LConfig::GetSections() {
