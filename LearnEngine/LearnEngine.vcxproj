@@ -168,6 +168,7 @@
     <ClInclude Include="LEngine.h" />
     <ClInclude Include="LearnEngineAPI.h" />
     <ClInclude Include="LException.h" />
+    <ClInclude Include="LRenderDevice.h" />
     <ClInclude Include="LWindow.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Utils.h" />
@@ -175,6 +176,7 @@
   <ItemGroup>
     <ClCompile Include="LConfig.cpp" />
     <ClCompile Include="LEngine.cpp" />
+    <ClCompile Include="LRenderDevice.cpp" />
     <ClCompile Include="LWindow.cpp" />
   </ItemGroup>
   <ItemGroup>

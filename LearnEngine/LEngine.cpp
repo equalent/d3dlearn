@@ -3,6 +3,8 @@
 
 #include "LEngine.h"
 
+#include "LRenderDevice.h"
+
 #include <string>
 #include <sstream>
 #include <ctime>
@@ -32,14 +34,15 @@ LE_API int RunEngine(HINSTANCE hInstance)
 #if HANDLE_EXCEPTIONS
 	}
 	catch (LException e) {
-		MessageBoxW(LEngine::Instance()->GetMainWindowHandle(), e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
+		MessageBoxW(NULL, e.Format().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
+		OutputDebugStringW(L"EXCT_1\n");
 		return -1;
 	}
 	catch (std::exception e) {
 		std::wostringstream woss;
 		woss << L"STD::EXCEPTION: ";
 		woss << convert_utf8_to_utf16(std::string(e.what()));
-		MessageBoxW(LEngine::Instance()->GetMainWindowHandle(), woss.str().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
+		MessageBoxW(NULL, woss.str().c_str(), L"UNHANDLED EXCEPTION in LearnEngine", MB_OK | MB_ICONERROR | MB_DEFAULT_DESKTOP_ONLY);
 		return -1;
 	}
 #endif
@@ -74,6 +77,10 @@ void LEngine::Run(HINSTANCE nhInstance) {
 			});
 
 		pMainWindow->SetOption(LWindowOptionsEnableFullscreenOnF11, true);
+		
+		// Initialize rendering
+		LRenderDevice::Instance()->Initialize(LRenderAPI::Direct3D11, pMainWindow->GetWidth(), pMainWindow->GetHeight());
+		pMainWindow->SetTitle(LRenderDevice::Instance()->GetAdapterName());
 
 #pragma warning (push)
 #pragma warning (disable: 4244)
