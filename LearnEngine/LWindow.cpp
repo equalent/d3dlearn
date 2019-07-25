@@ -3,8 +3,8 @@
 
 #define LWINDOW_CLASS_NAME L"learnengine_wnds"
 #define LWINDOW_DEFAULT_NAME L"LE Window"
-#define LWINDOW_DEFAULT_WIDTH 1280
-#define LWINDOW_DEFAULT_HEIGHT 720
+#define LWINDOW_DEFAULT_WIDTH 100
+#define LWINDOW_DEFAULT_HEIGHT 300
 
 #include "LEngine.h"
 #include "LWindow.h"

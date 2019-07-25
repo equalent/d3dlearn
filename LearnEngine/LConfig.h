@@ -12,7 +12,7 @@ DEFINE_EXCEPTION_WITH_MESSAGE(LConfigParseErrorException, L"Unable to parse the 
 
 class LConfig {
 public:
-	LConfig(std::experimental::filesystem::path ConfigPath);
+	LConfig();
 	inipp::Ini<wchar_t>::Sections GetSections();
 private:
 	std::unique_ptr<inipp::Ini<wchar_t>> m_Ini;

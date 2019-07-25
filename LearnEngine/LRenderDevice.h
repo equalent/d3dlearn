@@ -9,6 +9,7 @@
 
 DEFINE_EXCEPTION_WITH_MESSAGE(LRenderDeviceAlreadyInitializedException, L"The rendering device has already been initialized!");
 DEFINE_EXCEPTION_WITH_MESSAGE(LRenderDeviceNotInitializedException, L"The rendering device has not been yet initialized!");
+DEFINE_EXCEPTION_WITH_MESSAGE(LRenderDeviceUnableToLoadDXGIException, L"LearnEngine was unable to load DXGI!");
 DEFINE_EXCEPTION(LRenderDeviceUnableToInitializeException);
 
 enum LRenderAPI {

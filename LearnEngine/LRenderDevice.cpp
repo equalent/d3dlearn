@@ -17,6 +17,8 @@ LRenderDevice::LRenderDevice() {}
 HRESULT hr;
 
 #pragma region DXGI_TYPES
+HMODULE lmDxgi;
+
 ComPtr<IDXGIFactory3> pDxgiFactory = nullptr;
 ComPtr<IDXGIAdapter1> pDxgiAdapterOrig = nullptr;
 ComPtr<IDXGIAdapter3> pDxgiAdapter = nullptr;
@@ -24,6 +26,7 @@ ComPtr<IDXGIOutput> pDxgiOutputOrig = nullptr;
 ComPtr<IDXGIOutput3> pDxgiOutput = nullptr;
 #pragma endregion
 
+typedef HRESULT WINAPI CreateDXGIFactory1FunctionType(REFIID, _COM_Outptr_ void**);
 
 std::shared_ptr<LRenderDevice> LRenderDevice::Instance() {
 	if (!RenderDevicePtr) {
@@ -34,12 +37,18 @@ std::shared_ptr<LRenderDevice> LRenderDevice::Instance() {
 }
 
 void LRenderDevice::Initialize(LRenderAPI nApi, int nWidth, int nHeight) {
+	CreateDXGIFactory1FunctionType* CreateDXGIFactory1Function;
 	if (bIsInitialized) {
 		throw LRenderDeviceAlreadyInitializedException(__LINE__, __FILEW__);
-		return;
 	}
 #pragma region DXGI_INIT
-	hr = CreateDXGIFactory1(IID_PPV_ARGS(&pDxgiFactory));
+	lmDxgi = LoadLibraryW(L"dxgi.dll");
+	if (lmDxgi == 0) {
+		throw LRenderDeviceUnableToLoadDXGIException(__LINE__, __FILEW__);
+		return;
+	}
+	CreateDXGIFactory1Function = (CreateDXGIFactory1FunctionType*) GetProcAddress(lmDxgi, "CreateDXGIFactory1");
+	hr = CreateDXGIFactory1Function(IID_PPV_ARGS(&pDxgiFactory));
 	if (FAILED(hr)) {
 		throw LRenderDeviceUnableToInitializeException(__LINE__, __FILEW__, L"Unable to CreateDXGIFactory1!");
 	}
@@ -86,28 +95,38 @@ void LRenderDevice::Initialize(LRenderAPI nApi, int nWidth, int nHeight) {
 		throw LRenderDeviceUnableToInitializeException(__LINE__, __FILEW__, L"Unable to get display mode list!");
 	}
 
-	delete [] modeDescs;
+	UINT sW = GetScreenWidth();
+	UINT sH = GetScreenHeight();
 
-	int sW = GetScreenWidth();
-	int sH = GetScreenHeight();
+	UINT numerator{};
+	UINT denominator{};
 
-	UINT numerator;
-	UINT denominator;
-	/*
-	for (int i = 0; i < numModes; i++)
+#pragma warning ( push )
+#pragma warning ( disable:6385; disable:6001 )
+	
+	for (UINT i = 0; i < numModes; i++)
 	{
-		if (modeDescs[i].Width == (unsigned int)sW)
+		if (modeDescs[i].Width == sW)
 		{
-			if (modeDescs[i].Height == (unsigned int)sH)
+			if (modeDescs[i].Height == sH)
 			{
 				numerator = modeDescs[i].RefreshRate.Numerator;
 				denominator = modeDescs[i].RefreshRate.Denominator;
 			}
 		}
 	}
-	*/
+
+	delete[] modeDescs;
 
 #pragma endregion
+
+	std::wostringstream woss;
+	woss << L"Graphics card: " << adapterDesc.Description << L"\n";
+	woss << L"Video memory: " << humanSize(adapterDesc.DedicatedVideoMemory) << L"\n";
+	woss << L"Refresh rate: " << ((float)numerator) / ((float)denominator) << L"\n";
+	OutputDebugStringW(woss.str().c_str());
+
+#pragma warning ( pop )
 
 	bIsInitialized = true;
 }
@@ -133,4 +152,8 @@ std::uint64_t LRenderDevice::GetUsedVideoMemory() {
 		return info.CurrentUsage;
 	}
 	throw LRenderDeviceNotInitializedException(__LINE__, __FILEW__);
+}
+
+void LRenderDevice::Shutdown() {
+	FreeLibrary(lmDxgi);
 }

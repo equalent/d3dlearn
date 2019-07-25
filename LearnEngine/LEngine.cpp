@@ -4,6 +4,8 @@
 #include "LEngine.h"
 
 #include "LRenderDevice.h"
+#include "LTextRenderer.h"
+#include "LFileSystem.h"
 
 #include <string>
 #include <sstream>
@@ -62,9 +64,10 @@ void LEngine::Run(HINSTANCE nhInstance) {
 		wchar_t* lpFilename = new wchar_t[2048];
 		GetModuleFileNameW(hInstance, lpFilename, 2048);
 		RootPath = fs::path(std::wstring(lpFilename)).parent_path();
+		LFileSystem::Instance()->Initialize(RootPath / L"lengine.pak");
 
 		// LOAD CONFIG
-		pConfig = std::make_shared<LConfig>(RootPath / fs::path(L"learn.ini"));
+		pConfig = std::make_shared<LConfig>();
 
 		pMainWindow = std::make_shared<LWindow>();
 		pMainWindow->BindOnResize([this](int nWidth, int nHeight) {
@@ -81,6 +84,9 @@ void LEngine::Run(HINSTANCE nhInstance) {
 		// Initialize rendering
 		LRenderDevice::Instance()->Initialize(LRenderAPI::Direct3D11, pMainWindow->GetWidth(), pMainWindow->GetHeight());
 		pMainWindow->SetTitle(LRenderDevice::Instance()->GetAdapterName());
+
+		// Initialize text rendering
+		LTextRenderer::Instance()->Initialize();
 
 #pragma warning (push)
 #pragma warning (disable: 4244)
