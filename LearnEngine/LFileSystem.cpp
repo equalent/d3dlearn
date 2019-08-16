@@ -12,6 +12,7 @@ namespace fs = std::experimental::filesystem;
 
 void WriteFiles(const wchar_t* nPakPath, const wchar_t** nPakFiles, uint64_t nPakFilesCount) {
 	std::ofstream ofs(nPakPath, std::ofstream::out | std::ofstream::binary);
+	std::ofstream ofs_strings(std::wstring(nPakPath) + std::wstring(L".strings"), std::wofstream::out);
 	ofs.seekp(0, std::ios::beg);
 	ofs.write("LPAK", 5);
 	// File entry:
@@ -51,9 +52,12 @@ void WriteFiles(const wchar_t* nPakPath, const wchar_t** nPakFiles, uint64_t nPa
 		_List.push_back(_Li);
 		ifs.close();
 		wprintf_s(L"FILE \"%s\":\n\tFilename hash: %lld\n\tFile size: %s\n\tFile offset: %lld\n\tFile hash: %lld\n\n", fPath.filename().wstring().c_str(), fFileNameHash, humanSize(fFileSize).c_str(), fFileOffset, fFileHash);
+
+		// Write to .strings
+		ofs_strings << fFileNameHash << "\t" << fFileName << "\t" << fFileSize << "\t" << fFileOffset << "\t" << fFileHash;
 	}
 	uint64_t fileCount = _List.size();
-	ofs.write((const char*)&fileCount, sizeof(uint64_t));
+	ofs.write((const char*)& fileCount, sizeof(uint64_t));
 	for (uint64_t i = 0; i < nPakFilesCount; i++) {
 		uint64_t fFileNameHash = _List[i][0];
 		uint64_t fFileSize = _List[i][1];
@@ -69,12 +73,44 @@ void WriteFiles(const wchar_t* nPakPath, const wchar_t** nPakFiles, uint64_t nPa
 		delete[] _BufList[i];
 	}
 	ofs.flush();
+	ofs_strings.flush();
 	ofs.close();
+	ofs_strings.close();
+}
+
+int GetPakInfo(const wchar_t* pakPath, PakInfo* pakInfo) {
+	auto pFS = LFileSystem::Instance();
+	try {
+		pFS->Initialize(pakPath);
+	}
+	catch (LFileSystemPakBadFormat) {
+		return -2;
+	}
+
+	auto files = pFS->GetAllFiles();
+	PakFile* pakFiles = new PakFile[files.size()];
+	int i = 0;
+	for (auto file : files) {
+		pakFiles[i].filenameHash = file->GetFilenameHash();
+		pakFiles[i].hash = file->GetHash();
+		pakFiles[i].offset = file->GetOffset();
+		pakFiles[i].size = file->GetSize();
+		++i;
+	}
+	pakInfo->filesCount = files.size();
+	pakInfo->files = pakFiles;
+	return 0;
 }
 
 LFile::LFile(char* nPtr, uint64_t nSize) {
 	mPtr = nPtr;
 	mSize = nSize;
+}
+
+LFile::LFile(char* nPtr, uint64_t nSize, uint64_t nOffset, uint64_t nHash, uint64_t nFilenameHash) : LFile(nPtr, nSize) {
+	mOffset = nOffset;
+	mHash = nHash;
+	mFilenameHash = nFilenameHash;
 }
 
 LFile::~LFile() {
@@ -89,6 +125,18 @@ uint64_t LFile::GetSize() {
 	return mSize;
 }
 
+uint64_t LFile::GetOffset() {
+	return mOffset;
+}
+
+uint64_t LFile::GetHash() {
+	return mHash;
+}
+
+uint64_t LFile::GetFilenameHash() {
+	return mFilenameHash;
+}
+
 std::wstring LFile::ReadAsString() {
 	std::vector<char> strv;
 	for (uint64_t i = 0; i < GetSize(); i++) {
@@ -100,7 +148,7 @@ std::wstring LFile::ReadAsString() {
 	return convert_utf8_to_utf16(std::string(strv.begin(), strv.end()));
 }
 
-LFileSystem::LFileSystem(){}
+LFileSystem::LFileSystem() {}
 
 std::shared_ptr<LFileSystem> LFileSystem::Instance() {
 	if (!FileSystemPtr) {
@@ -151,4 +199,15 @@ std::shared_ptr<LFile> LFileSystem::GetFile(std::wstring nFileName) {
 	catch (std::out_of_range e) {
 		throw LFileSystemFileNotFoundException(__LINE__, __FILEW__);
 	}
+}
+
+std::vector<std::shared_ptr<LFile>> LFileSystem::GetAllFiles() {
+	std::vector<std::shared_ptr<LFile>> res;
+	for (auto& [_Hash, _Value] : mList) {
+		mPakStream.seekg(_Value[1], std::ios::beg);
+		char* fBuf = new char[_Value[0]];
+		mPakStream.read(fBuf, _Value[0]);
+		res.push_back(std::make_shared<LFile>(fBuf, _Value[0], _Value[1], _Value[2], _Hash));
+	}
+	return res;
 }

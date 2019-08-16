@@ -8,6 +8,8 @@
 #include <wrl.h>
 #include "Utils.h"
 
+#define LRENDER_FORMAT DXGI_FORMAT_R8G8B8A8_UNORM
+
 using namespace Microsoft::WRL;
 
 std::shared_ptr<LRenderDevice> RenderDevicePtr = nullptr;
@@ -83,14 +85,14 @@ void LRenderDevice::Initialize(LRenderAPI nApi, int nWidth, int nHeight) {
 	}
 
 	UINT numModes = 0;
-	hr = pDxgiOutput->GetDisplayModeList1(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
+	hr = pDxgiOutput->GetDisplayModeList1(LRENDER_FORMAT, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
 	if (FAILED(hr)) {
 		throw LRenderDeviceUnableToInitializeException(__LINE__, __FILEW__, L"Unable to get display mode list!");
 	}
 
 	DXGI_MODE_DESC1 * modeDescs = new DXGI_MODE_DESC1[numModes];
 
-	hr = pDxgiOutput->GetDisplayModeList1(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, modeDescs);
+	hr = pDxgiOutput->GetDisplayModeList1(LRENDER_FORMAT, DXGI_ENUM_MODES_INTERLACED, &numModes, modeDescs);
 	if (FAILED(hr)) {
 		throw LRenderDeviceUnableToInitializeException(__LINE__, __FILEW__, L"Unable to get display mode list!");
 	}

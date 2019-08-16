@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PakBuilder", "PakBuilder\Pa
 		{56E5D33F-2E5D-4475-BECE-F42A2F06537C} = {56E5D33F-2E5D-4475-BECE-F42A2F06537C}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PakViewer", "PakViewer\PakViewer.csproj", "{1288876B-9C29-4B65-80BC-F215B3096BD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -57,6 +59,12 @@ Global
 		{AAE6471A-050B-4364-8DA6-04F313422BCE}.Release|x64.Build.0 = Release|x64
 		{AAE6471A-050B-4364-8DA6-04F313422BCE}.Release|x86.ActiveCfg = Release|Win32
 		{AAE6471A-050B-4364-8DA6-04F313422BCE}.Release|x86.Build.0 = Release|Win32
+		{1288876B-9C29-4B65-80BC-F215B3096BD9}.Debug|x64.ActiveCfg = Debug|x64
+		{1288876B-9C29-4B65-80BC-F215B3096BD9}.Debug|x64.Build.0 = Debug|x64
+		{1288876B-9C29-4B65-80BC-F215B3096BD9}.Debug|x86.ActiveCfg = Debug|x64
+		{1288876B-9C29-4B65-80BC-F215B3096BD9}.Release|x64.ActiveCfg = Release|x64
+		{1288876B-9C29-4B65-80BC-F215B3096BD9}.Release|x64.Build.0 = Release|x64
+		{1288876B-9C29-4B65-80BC-F215B3096BD9}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

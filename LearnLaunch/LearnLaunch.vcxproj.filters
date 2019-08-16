@@ -12,4 +12,7 @@
   <ItemGroup>
     <Image Include="..\..\..\Users\andre\Downloads\LearnEngineIcon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="learn.manifest" />
+  </ItemGroup>
 </Project>

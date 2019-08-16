@@ -2,6 +2,7 @@
 // This code is distributed under MIT License
 
 #include "LEngine.h"
+#include <VersionHelpers.h>
 
 #include "LRenderDevice.h"
 #include "LTextRenderer.h"
@@ -13,6 +14,7 @@
 #include <exception>
 
 #define HANDLE_EXCEPTIONS 1
+#define VERSION_FUNCTION IsWindows10OrGreater
 
 std::shared_ptr<LEngine> EnginePtr;
 bool EnginePtrInitialized = false;
@@ -21,6 +23,10 @@ namespace fs = std::experimental::filesystem;
 
 LE_API int RunEngine(HINSTANCE hInstance)
 {
+	int val = VERSION_FUNCTION();
+	if (val == FALSE) {
+		return 54;
+	}
 #if defined(_DEBUG)
 	wchar_t* lpFilename = new wchar_t[2048];
 	GetModuleFileNameW(hInstance, lpFilename, 2048);

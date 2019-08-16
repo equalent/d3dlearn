@@ -168,6 +168,9 @@
   <ItemGroup>
     <Image Include="..\..\..\Users\andre\Downloads\LearnEngineIcon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="learn.manifest" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
