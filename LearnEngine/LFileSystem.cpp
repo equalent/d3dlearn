@@ -54,7 +54,7 @@ void WriteFiles(const wchar_t* nPakPath, const wchar_t** nPakFiles, uint64_t nPa
 		wprintf_s(L"FILE \"%s\":\n\tFilename hash: %lld\n\tFile size: %s\n\tFile offset: %lld\n\tFile hash: %lld\n\n", fPath.filename().wstring().c_str(), fFileNameHash, humanSize(fFileSize).c_str(), fFileOffset, fFileHash);
 
 		// Write to .strings
-		ofs_strings << fFileNameHash << "\t" << fFileName << "\t" << fFileSize << "\t" << fFileOffset << "\t" << fFileHash;
+		ofs_strings << fFileNameHash << "$" << fFileName << "$" << fFileSize << "$" << fFileOffset << "$" << fFileHash << "&";
 	}
 	uint64_t fileCount = _List.size();
 	ofs.write((const char*)& fileCount, sizeof(uint64_t));
@@ -79,6 +79,13 @@ void WriteFiles(const wchar_t* nPakPath, const wchar_t** nPakFiles, uint64_t nPa
 }
 
 int GetPakInfo(const wchar_t* pakPath, PakInfo* pakInfo) {
+#ifdef _DEBUG
+	std::wostringstream woss;
+	woss << L"Getting PAK info for PAK at: \"";
+	woss << pakPath;
+	woss << L"\"\n";
+	OutputDebugStringW(woss.str().c_str());
+#endif
 	auto pFS = LFileSystem::Instance();
 	try {
 		pFS->Initialize(pakPath);
